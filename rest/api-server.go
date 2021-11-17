@@ -3,6 +3,7 @@ package rest
 import (
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
@@ -26,7 +27,11 @@ func (s APIServer) initRoutes() {
 
 // Run starts the server
 func (s APIServer) Run() {
-	log.Info("Starting server")
 
-	http.ListenAndServe(":3000", s.router)
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	log.Info("Starting the API server")
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s.router)))
 }
