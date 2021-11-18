@@ -6,9 +6,6 @@ import (
 	"net/http"
 )
 
-
-
-
 func respondWithErrorMsg(w http.ResponseWriter, code int, msg string) {
 	respondWithJSON(w, code, map[string]string{"error": msg})
 }
