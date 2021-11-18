@@ -23,6 +23,7 @@ func NewServer() *APIServer {
 
 func (s APIServer) initRoutes() {
 	s.router.HandleFunc("/", homePageHandler)
+	s.router.HandleFunc("/{name}", nameHandler)
 }
 
 // Run starts the server
@@ -32,6 +33,6 @@ func (s APIServer) Run() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	log.Info("Starting the API server")
+	log.Info("Starting the API server at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s.router)))
 }
