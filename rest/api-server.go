@@ -23,6 +23,7 @@ func NewServer() *APIServer {
 
 func (s APIServer) initRoutes() {
 	s.router.HandleFunc("/", homePageHandler)
+	s.router.HandleFunc("/query", nameAsQueryHandler)
 	s.router.HandleFunc("/{name}", nameHandler)
 }
 
