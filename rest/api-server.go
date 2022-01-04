@@ -10,21 +10,22 @@ import (
 
 // APIServer adapter around the mux router
 type APIServer struct {
-	router *mux.Router
+	*mux.Router
 }
 
 // NewServer creates a new server
 func NewServer() *APIServer {
-	s := &APIServer{}
-	s.router = mux.NewRouter()
+	s := &APIServer{
+		mux.NewRouter(),
+	}
 	s.initRoutes()
 	return s
 }
 
 func (s APIServer) initRoutes() {
-	s.router.HandleFunc("/", homePageHandler)
-	s.router.HandleFunc("/query", nameAsQueryHandler)
-	s.router.HandleFunc("/{name}", nameHandler)
+	s.HandleFunc("/", homePageHandler)
+	s.HandleFunc("/query", nameAsQueryHandler)
+	s.HandleFunc("/{name}", nameHandler)
 }
 
 // Run starts the server
@@ -35,5 +36,5 @@ func (s APIServer) Run() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	log.Info("Starting the API server at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s.router)))
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s)))
 }
