@@ -12,7 +12,7 @@ func respondWithErrorMsg(w http.ResponseWriter, code int, msg string) {
 
 // respondWithError responds with an error message
 func respondWithError(w http.ResponseWriter, err error) {
-	respondWithJSON(w, 500, map[string]string{"error": err.Error()})
+	respondWithJSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 }
 
 // respondWithJSON converts the payload into JSON and responds with it
