@@ -5,7 +5,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // APIServer adapter around the mux router
@@ -25,7 +25,8 @@ func NewServer() *APIServer {
 func (s APIServer) initRoutes() {
 	s.HandleFunc("/", homePageHandler)
 	s.HandleFunc("/query", nameAsQueryHandler)
-	s.HandleFunc("/{name}", nameHandler)
+	s.HandleFunc("/catFact", catFactHandler)
+	s.HandleFunc("/{name}", nameHandler) // has to be at the bottom
 }
 
 // Run starts the server
@@ -35,6 +36,6 @@ func (s APIServer) Run() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	log.Info("Starting the API server at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s)))
+	logrus.Info("Starting the API server at http://localhost:8080")
+	logrus.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s)))
 }

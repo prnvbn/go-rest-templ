@@ -26,3 +26,13 @@ func nameAsQueryHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("Hello, " + name + ", You were passed in as a query!"))
 }
+
+func catFactHandler(w http.ResponseWriter, r *http.Request) {
+	cr, err := getCatFact()
+	if err != nil {
+		respondWithError(w, err)
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, cr)
+}
