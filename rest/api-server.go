@@ -23,10 +23,10 @@ func NewServer() *APIServer {
 }
 
 func (s APIServer) initRoutes() {
-	s.HandleFunc("/", homePageHandler)
-	s.HandleFunc("/query", nameAsQueryHandler)
-	s.HandleFunc("/catFact", catFactHandler)
-	s.HandleFunc("/{name}", nameHandler) // has to be at the bottom
+	s.HandleFunc("/", homePageHandler).Methods("GET")
+	s.HandleFunc("/query", nameAsParamHandler).Methods("GET")
+	s.HandleFunc("/catFact", catFactHandler).Methods("GET")
+	s.HandleFunc("/{name}", nameHandler).Methods("GET") // has to be at the bottom
 }
 
 // Run starts the server
@@ -36,6 +36,8 @@ func (s APIServer) Run() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
+	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)
+
 	logrus.Info("Starting the API server at http://localhost:8080")
-	logrus.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(s)))
+	logrus.Fatal(http.ListenAndServe(":8080", corsHandler(s)))
 }
