@@ -37,7 +37,14 @@ func (s APIServer) Run() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)
+	port, ok := os.LookupEnv("PORT")
+	
+	if !ok {
+		os.Setenv("PORT", "8080")
+		logrus.Fatal("$PORT must be set")
+	}
 
-	logrus.Info("Starting the API server at http://localhost:8080")
-	logrus.Fatal(http.ListenAndServe(":8080", corsHandler(s)))
+	logrus.Info("Starting server on port http://localhost:" + port)
+	logrus.Fatal(http.ListenAndServe(":"+port, corsHandler(s)))
+}
 }
