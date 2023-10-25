@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -47,6 +47,7 @@ func (s APIServer) Run() {
 		port = DEFAULT_PORT
 	}
 
-	logrus.Info("Starting server on port http://localhost:" + port)
-	logrus.Fatal(http.ListenAndServe(":"+port, corsHandler(s)))
+	addr := "localhost:" + port
+	log.Info().Str("addr", addr).Msg("Starting server")
+	log.Fatal().Err(http.ListenAndServe(addr, corsHandler(s))).Send()
 }
