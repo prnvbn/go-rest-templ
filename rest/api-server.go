@@ -9,6 +9,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	DEFAULT_PORT = "8080"
+)
+
 // APIServer adapter around the mux router
 type APIServer struct {
 	*mux.Router
@@ -39,10 +43,8 @@ func (s APIServer) Run() {
 
 	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)
 	port, ok := os.LookupEnv("PORT")
-
 	if !ok {
-		os.Setenv("PORT", "8080")
-		logrus.Fatal("$PORT must be set")
+		port = DEFAULT_PORT
 	}
 
 	logrus.Info("Starting server on port http://localhost:" + port)
