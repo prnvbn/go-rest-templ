@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"go-rest/rest"
+
+	"github.com/rs/zerolog/log"
+
 	"os"
 
 	"github.com/spf13/cobra"
@@ -15,12 +18,19 @@ const (
 
 // rootCmd represents the base command when called without any subcommands
 var (
+	cfgFile string
 	cfg     = &rest.Config{}
 	rootCmd = &cobra.Command{
 		Use:   "go-rest",
 		Short: "A simple REST server template",
 
 		Run: func(cmd *cobra.Command, args []string) {
+
+			if cfgFile != "" {
+				if err := cfg.LoadYAMLFile(cfgFile); err != nil {
+					log.Fatal().Err(err).Msg("Error loading config")
+				}
+			}
 			server := rest.NewServer(cfg)
 			server.Run()
 		},
@@ -40,6 +50,15 @@ func init() {
 	rootCmd.Flags().IntVarP(&cfg.Port, "port", "p", DEFAULT_PORT, "Port to run the server on")
 	rootCmd.Flags().StringVarP(&cfg.Addr, "addr", "a", DEFAULT_HOST, "Address to run the server on")
 
-	rootCmd.Flags().BoolVarP(&cfg.CatFact.Enabled, "cat-facts", "c", true, "Enable cat facts")
+	rootCmd.Flags().BoolVarP(&cfg.CatFact.Enabled, "cat-facts", "f", true, "Enable cat facts")
 	rootCmd.Flags().StringVarP(&cfg.CatFact.URL, "cat-facts-url", "u", DEFAULT_CAT_FACT_URL, "URL to get cat facts from")
+
+	rootCmd.Flags().StringVarP(&cfgFile, "config", "c", "", "Config file path (cannot use with any other flag)")
+
+	// mark config flag as mutually exclusive with other flags
+	for _, f := range []string{"port", "addr", "cat-facts", "cat-facts-url"} {
+		rootCmd.MarkFlagsMutuallyExclusive("config", f)
+	}
+
+	// rootCmd.MarkFlagsMutuallyExclusive("config", "port", "addr", "cat-facts", "cat-facts-url")
 }

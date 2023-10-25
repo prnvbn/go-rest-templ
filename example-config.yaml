@@ -1,0 +1,6 @@
+addr: localhost
+port: 9090
+
+cat-facts:
+  enabled: true
+  url: "https://catfact.ninja/fact"
