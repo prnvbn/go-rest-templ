@@ -8,15 +8,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const catFactURL = "https://catfact.ninja/fact"
-
 type catFactAPIResp struct {
 	Fact   string `json:"fact"`
 	Length int    `json:"length"`
 }
 
 // getCatFact gets a cat fact from the cat fact API
-func getCatFact() (cr catFactAPIResp, err error) {
+func getCatFact(catFactURL string) (cr catFactAPIResp, err error) {
 
 	log.Info().Str("url", catFactURL).Msg("Getting a cat fact from the cat fact API")
 	resp, err := http.Get(catFactURL)

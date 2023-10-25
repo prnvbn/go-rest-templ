@@ -1,10 +1,7 @@
 package main
 
-import (
-	"go-rest/rest"
-)
+import "go-rest/cmd"
 
 func main() {
-	server := rest.NewServer()
-	server.Run()
+	cmd.Execute()
 }
