@@ -23,7 +23,7 @@ The server can be configured in the following ways:
     go run main.go -c example-config.yaml
   ```
 
-Note that when using the config `-c/--config` flag, none of the other flags can be used. When using a YAML config file, none of the fields have default values, so all of them must be specified.
+Note that when using the config `-c/--config` flag, none of the other flags can be used. When using a YAML config file, the fields have the same default values as the CLI flags.
 
 ## Usage
 
