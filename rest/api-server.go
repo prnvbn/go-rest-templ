@@ -35,8 +35,8 @@ func (s APIServer) initRoutes() {
 }
 
 // Run starts the server
+// TODO: add graceful shutdown
 func (s APIServer) Run() {
-
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
@@ -44,6 +44,6 @@ func (s APIServer) Run() {
 	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)
 
 	addr := fmt.Sprintf("%s:%d", s.cfg.Addr, s.cfg.Port)
-	log.Info().Str("addr", addr).Msg("Starting server")
+	log.Info().Str("addr", addr).Msg("Serving API")
 	log.Fatal().Err(http.ListenAndServe(addr, corsHandler(s))).Send()
 }

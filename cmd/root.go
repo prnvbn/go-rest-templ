@@ -1,44 +1,33 @@
 package cmd
 
 import (
+	"fmt"
 	"go-rest/rest"
+	"path/filepath"
 
+	"github.com/adrg/xdg"
 	"github.com/rs/zerolog/log"
+	"gopkg.in/yaml.v3"
 
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
-const (
-	DEFAULT_CAT_FACT_URL     = "https://catfact.ninja/fact"
-	DEFAULT_PORT             = 8080
-	DEFAULT_ADDR             = "localhost"
-	DEFAULT_CAT_FACT_ENABLED = true
-)
-
 // rootCmd represents the base command when called without any subcommands
 var (
-	cfgFile string
-	cfg     = &rest.Config{
-		Addr: DEFAULT_ADDR,
-		Port: DEFAULT_PORT,
-		CatFact: rest.CatFactsConfig{
-			Enabled: false,
-			URL:     DEFAULT_CAT_FACT_URL,
-		},
-	}
+	cfgPath string
+
 	rootCmd = &cobra.Command{
 		Use:   "go-rest",
 		Short: "A simple REST server template",
 
 		Run: func(cmd *cobra.Command, args []string) {
-
-			if cfgFile != "" {
-				if err := cfg.LoadYAMLFile(cfgFile); err != nil {
-					log.Fatal().Err(err).Msg("Error loading config")
-				}
+			cfg, err := loadConfig(cfgPath)
+			if err != nil {
+				log.Fatal().Err(err).Msg("Error loading config")
 			}
+
 			server := rest.NewServer(cfg)
 			server.Run()
 		},
@@ -55,18 +44,29 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().IntVarP(&cfg.Port, "port", "p", DEFAULT_PORT, "Port to run the server on")
-	rootCmd.Flags().StringVarP(&cfg.Addr, "addr", "a", DEFAULT_ADDR, "Address to run the server on")
+	var ok bool
+	cfgPath, ok = os.LookupEnv("REST_CONFIG_PATH")
+	if !ok {
+		cfgPath = xdg.ConfigHome + "/rest/config.yaml"
+	}
+}
 
-	rootCmd.Flags().BoolVarP(&cfg.CatFact.Enabled, "cat-facts", "f", DEFAULT_CAT_FACT_ENABLED, "Enable cat facts")
-	rootCmd.Flags().StringVarP(&cfg.CatFact.URL, "cat-facts-url", "u", DEFAULT_CAT_FACT_URL, "URL to get cat facts from")
-
-	rootCmd.Flags().StringVarP(&cfgFile, "config", "c", "", "Config file path (cannot use with any other flag)")
-
-	// mark config flag as mutually exclusive with other flags
-	for _, f := range []string{"port", "addr", "cat-facts", "cat-facts-url"} {
-		rootCmd.MarkFlagsMutuallyExclusive("config", f)
+func loadConfig(cfgPath string) (*rest.Config, error) {
+	absCfgFile, err := filepath.Abs(cfgPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get absolute path of the config file %s: %w", cfgPath, err)
 	}
 
-	// rootCmd.MarkFlagsMutuallyExclusive("config", "port", "addr", "cat-facts", "cat-facts-url")
+	// read yaml file
+	bs, err := os.ReadFile(absCfgFile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %w", err)
+	}
+
+	var cfg rest.Config
+	if err = yaml.Unmarshal(bs, &cfg); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal yalml file: %w", err)
+	}
+
+	return &cfg, nil
 }
