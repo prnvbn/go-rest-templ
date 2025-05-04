@@ -1,5 +1,5 @@
 addr: localhost
-port: 9090
+port: 9999
 
 cat-facts:
   enabled: true

@@ -34,8 +34,6 @@ func (s APIServer) initRoutes() {
 	s.HandleFunc("/{name}", s.nameHandler).Methods("GET") // has to be at the bottom
 }
 
-// Run starts the server
-// TODO: add graceful shutdown
 func (s APIServer) Run() {
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
