@@ -1,4 +1,4 @@
-package rest
+package server
 
 import (
 	"fmt"
@@ -15,8 +15,8 @@ type APIServer struct {
 	cfg *Config
 }
 
-// NewServer creates a new server
-func NewServer(cfg *Config) *APIServer {
+// New creates a new server
+func New(cfg *Config) *APIServer {
 	s := &APIServer{
 		Router: &mux.Router{},
 		cfg:    cfg,
@@ -31,7 +31,7 @@ func (s APIServer) initRoutes() {
 	if s.cfg.CatFact.Enabled {
 		s.HandleFunc("/catFact", s.catFactHandler).Methods("GET")
 	}
-	s.HandleFunc("/{name}", s.nameHandler).Methods("GET") // has to be at the bottom
+	s.HandleFunc("/{name}", s.nameHandler).Methods("GET")
 }
 
 func (s APIServer) Run() {

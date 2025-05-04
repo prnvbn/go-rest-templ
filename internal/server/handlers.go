@@ -1,6 +1,7 @@
-package rest
+package server
 
 import (
+	"go-rest/pkg/cat"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -29,7 +30,7 @@ func (s APIServer) nameAsParamHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s APIServer) catFactHandler(w http.ResponseWriter, r *http.Request) {
-	cr, err := getCatFact(s.cfg.CatFact.URL)
+	cr, err := cat.FetchFact(s.cfg.CatFact.URL)
 	if err != nil {
 		respondWithError(w, err)
 		return

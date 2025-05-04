@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"go-rest/rest"
+	"go-rest/internal/server"
 	"os"
 	"path/filepath"
 
@@ -35,10 +35,10 @@ func main() {
 
 	// Run starts the server
 	// TODO: add graceful shutdown
-	rest.NewServer(cfg).Run()
+	server.New(cfg).Run()
 }
 
-func loadConfig(cfgPath string) (*rest.Config, error) {
+func loadConfig(cfgPath string) (*server.Config, error) {
 	absCfgFile, err := filepath.Abs(cfgPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path of the config file %s: %w", cfgPath, err)
@@ -49,7 +49,7 @@ func loadConfig(cfgPath string) (*rest.Config, error) {
 		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
-	var cfg rest.Config
+	var cfg server.Config
 	if err = yaml.Unmarshal(bs, &cfg); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal yaml file: %w", err)
 	}
