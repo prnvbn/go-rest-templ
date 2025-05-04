@@ -1,38 +1,37 @@
 package server
 
 import (
+	"context"
 	"go-rest/pkg/cat"
-	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
 
-func (s *Server) homePageHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
+type NameResponse struct {
+	Body struct {
+		Message string `json:"message"`
+	} `json:"body"`
 }
 
-// nameHandler is a handler for the /{name} endpoint.
-// It takes a name as a path parameter and returns a greeting
-func (s *Server) nameHandler(w http.ResponseWriter, r *http.Request) {
-	name := chi.URLParam(r, "name")
-	w.Write([]byte("Hello, " + name + "!"))
+func (s *Server) NameHandler(ctx context.Context, params *struct {
+	Name string `path:"name"`
+}) (*NameResponse, error) {
+	resp := NameResponse{}
+	resp.Body.Message = "Hello, " + params.Name + "!"
+	return &resp, nil
 }
 
-// nameAsParamHandler is a handler for the /query?name={name} endpoint.
-// It takes a name as a query parameter and returns a greeting
-func (s *Server) nameAsParamHandler(w http.ResponseWriter, r *http.Request) {
-	// Get the value of the "name" query parameter from the URL.
-	name := r.URL.Query().Get("name")
-
-	w.Write([]byte("Hello, " + name + ", You were passed in as a query!"))
+type CatFactResponse struct {
+	Body struct {
+		cat.CatFact
+	} `json:"body"`
 }
 
-func (s *Server) catFactHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) CatFactHandler(ctx context.Context, _ *struct{}) (*CatFactResponse, error) {
 	cr, err := cat.FetchFact(s.cfg.CatFact.URL)
 	if err != nil {
-		respondWithError(w, err)
-		return
+		return nil, err
 	}
 
-	respondWithJSON(w, http.StatusOK, cr)
+	resp := CatFactResponse{}
+	resp.Body.CatFact = cr
+	return &resp, nil
 }
