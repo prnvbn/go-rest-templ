@@ -11,7 +11,6 @@ import (
 )
 
 type Config struct {
-	Addr    string         `yaml:"addr"`
 	Port    int            `yaml:"port"`
 	CatFact cat.FactConfig `yaml:"cat-facts"`
 }

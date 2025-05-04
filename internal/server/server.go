@@ -30,7 +30,7 @@ func New(cfg *Config) *Server {
 }
 
 func (s *Server) Run() {
-	addr := fmt.Sprintf("%s:%d", s.cfg.Addr, s.cfg.Port)
+	addr := fmt.Sprintf("0.0.0.0:%d", s.cfg.Port)
 	srv := &http.Server{
 		Addr:    addr,
 		Handler: s,
