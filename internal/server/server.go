@@ -4,44 +4,48 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/rs/zerolog/log"
 )
 
-// APIServer adapter around the mux router
-type APIServer struct {
-	*mux.Router
+type Server struct {
+	*chi.Mux
 	cfg *Config
 }
 
-// New creates a new server
-func New(cfg *Config) *APIServer {
-	s := &APIServer{
-		Router: &mux.Router{},
-		cfg:    cfg,
+func New(cfg *Config) *Server {
+	s := &Server{
+		Mux: chi.NewRouter(),
+		cfg: cfg,
 	}
 	s.initRoutes()
 	return s
 }
 
-func (s APIServer) initRoutes() {
-	s.HandleFunc("/", s.homePageHandler).Methods("GET")
-	s.HandleFunc("/query", s.nameAsParamHandler).Methods("GET")
-	if s.cfg.CatFact.Enabled {
-		s.HandleFunc("/catFact", s.catFactHandler).Methods("GET")
-	}
-	s.HandleFunc("/{name}", s.nameHandler).Methods("GET")
+func (s *Server) initRoutes() {
+	s.Use(middleware.Logger)
+	s.Use(middleware.Recoverer)
+
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+	s.Use(corsMiddleware.Handler)
+
+	s.Get("/", s.homePageHandler)
+	s.Get("/query", s.nameAsParamHandler)
+	s.Get("/catFact", s.catFactHandler)
+	s.Get("/{name}", s.nameHandler)
 }
 
-func (s APIServer) Run() {
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
-	corsHandler := handlers.CORS(originsOk, headersOk, methodsOk)
-
+func (s *Server) Run() {
 	addr := fmt.Sprintf("%s:%d", s.cfg.Addr, s.cfg.Port)
 	log.Info().Str("addr", addr).Msg("Serving API")
-	log.Fatal().Err(http.ListenAndServe(addr, corsHandler(s))).Send()
+	log.Fatal().Err(http.ListenAndServe(addr, s)).Send()
 }

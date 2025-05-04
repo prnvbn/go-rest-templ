@@ -4,6 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"go-rest/pkg/cat"
+
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
@@ -11,12 +13,7 @@ import (
 type Config struct {
 	Addr    string         `yaml:"addr"`
 	Port    int            `yaml:"port"`
-	CatFact CatFactsConfig `yaml:"cat-facts"`
-}
-
-type CatFactsConfig struct {
-	Enabled bool   `yaml:"enabled"`
-	URL     string `yaml:"url"`
+	CatFact cat.FactConfig `yaml:"cat-facts"`
 }
 
 func (cfg *Config) LoadYAMLFile(cfgFilepath string) error {
@@ -25,7 +22,6 @@ func (cfg *Config) LoadYAMLFile(cfgFilepath string) error {
 		return errors.Wrapf(err, "failed to get absolute path of config file %s", cfgFilepath)
 	}
 
-	// read yaml file
 	bs, err := os.ReadFile(absCfgFile)
 	if err != nil {
 		return errors.Wrapf(err, "error reading config file %s", absCfgFile)

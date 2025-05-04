@@ -8,6 +8,10 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type FactConfig struct {
+	URL string `yaml:"url"`
+}
+
 type CatFact struct {
 	Fact   string `json:"fact"`
 	Length int    `json:"length"`
