@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"go-rest/pkg/cat"
+
+	"github.com/rs/zerolog/log"
 )
 
 type NameResponse struct {
@@ -25,9 +27,13 @@ type CatFactResponse struct {
 	} `json:"body"`
 }
 
-// TODO: pass in log w ctx
 func (s *Server) CatFactHandler(ctx context.Context, _ *struct{}) (*CatFactResponse, error) {
-	cr, err := cat.FetchFact(s.cfg.CatFact.URL)
+	log := log.With().Str("handler", "CatFactHandler").Logger()
+
+	log.Info().Msg("Fetching cat fact")
+
+	ctx = log.WithContext(ctx)
+	cr, err := cat.FetchFact(ctx, s.cfg.CatFact.URL)
 	if err != nil {
 		return nil, err
 	}

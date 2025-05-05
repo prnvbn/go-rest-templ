@@ -1,11 +1,12 @@
 package cat
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 )
 
 type FactConfig struct {
@@ -18,8 +19,10 @@ type CatFact struct {
 }
 
 // FetchFact gets a cat fact from the cat fact API
-func FetchFact(url string) (fact CatFact, err error) {
+func FetchFact(ctx context.Context, url string) (fact CatFact, err error) {
+	log := zerolog.Ctx(ctx)
 	log.Info().Str("url", url).Msg("Getting a cat fact from the cat fact API")
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return fact, err
