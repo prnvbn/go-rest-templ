@@ -33,8 +33,6 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to load config")
 	}
 
-	// Run starts the server
-	// TODO: add graceful shutdown
 	server.New(cfg).Run()
 }
 
