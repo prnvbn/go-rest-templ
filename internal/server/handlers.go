@@ -33,7 +33,7 @@ func (s *Server) CatFactHandler(ctx context.Context, _ *struct{}) (*CatFactRespo
 	log.Info().Msg("Fetching cat fact")
 
 	ctx = log.WithContext(ctx)
-	cr, err := cat.FetchFact(ctx, s.cfg.CatFact.URL)
+	cr, err := cat.FetchFact(ctx, s.cfg.CatFact)
 	if err != nil {
 		return nil, err
 	}

@@ -19,11 +19,11 @@ type CatFact struct {
 }
 
 // FetchFact gets a cat fact from the cat fact API
-func FetchFact(ctx context.Context, url string) (fact CatFact, err error) {
+func FetchFact(ctx context.Context, cfg FactConfig) (fact CatFact, err error) {
 	log := zerolog.Ctx(ctx)
-	log.Info().Str("url", url).Msg("Getting a cat fact from the cat fact API")
+	log.Info().Str("url", cfg.URL).Msg("Getting a cat fact from the cat fact API")
 
-	resp, err := http.Get(url)
+	resp, err := http.Get(cfg.URL)
 	if err != nil {
 		return fact, err
 	}
