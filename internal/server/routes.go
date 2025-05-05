@@ -7,6 +7,7 @@ import (
 	"github.com/danielgtaylor/huma/v2/adapters/humachi"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func (s *Server) init() {
@@ -22,6 +23,9 @@ func (s *Server) init() {
 		MaxAge:           300,
 	})
 	s.Use(corsMiddleware.Handler)
+
+	s.Use(metricsMiddleware)
+	s.Handle("/metrics", promhttp.Handler())
 
 	api := humachi.New(s, huma.DefaultConfig("My API", "1.0.0"))
 

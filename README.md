@@ -20,5 +20,5 @@ I come back to this from time to time and update it, currently using the followi
 - http: chi+huma
 - docs: huma
 - logging: zerolog
-- metrics: prometheus (TODO)
+- metrics: prometheus
 - CI/CD: GHA (TODO)
