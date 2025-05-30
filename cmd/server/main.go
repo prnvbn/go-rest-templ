@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"go-rest/internal/server"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/adrg/xdg"
 	"github.com/rs/zerolog/log"
@@ -33,7 +36,12 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to load config")
 	}
 
-	server.New(cfg).Run()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	srv := server.New(cfg)
+
+	srv.Run(ctx)
 }
 
 func loadConfig(cfgPath string) (*server.Config, error) {
