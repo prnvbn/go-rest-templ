@@ -7,11 +7,13 @@ A simple template for a REST API server in Go.
 Run the server with `SERVER_CONFIG_PATH=local_config.yaml go run cmd/server/main.go`. An example config file is given below:
 
 ```yaml
-port: 9999
+server:
+  port: 9999
+  cat-facts:
+    enabled: true
+    url: "https://catfact.ninja/fact"
 
-cat-facts:
-  enabled: true
-  url: "https://catfact.ninja/fact"
+disable-otel-logs: true
 ```
 
 I come back to this from time to time and update it, currently using the following:
@@ -19,6 +21,5 @@ I come back to this from time to time and update it, currently using the followi
 - config: YAML file via env var
 - http: chi+huma
 - docs: huma
-- logging: zerolog
+- logging: zerolog + OTEL exporter
 - metrics: prometheus
-- CI/CD: GHA (TODO)
