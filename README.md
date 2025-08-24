@@ -23,3 +23,4 @@ I come back to this from time to time and update it, currently using the followi
 - docs: huma
 - logging: zerolog + OTEL exporter
 - metrics: prometheus
+- docker: `docker build --ssh default -f Dockerfile -t server:dev .` to build (`--ssh default is only required if importing private modules)
