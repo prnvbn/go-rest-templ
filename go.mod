@@ -5,7 +5,7 @@ go 1.24
 require (
 	github.com/adrg/xdg v0.5.3
 	github.com/danielgtaylor/huma/v2 v2.32.0
-	github.com/go-chi/chi/v5 v5.1.0
+	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.1
 	github.com/prometheus/client_golang v1.19.0
 	github.com/rs/zerolog v1.31.0
